@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        var sceneList = [];
+        function init() {
+            // console.log("Hello World!");
+            var RectangleInstance = new Rectangle(0, 0, changeColor());
+            sceneList.push(RectangleInstance);
+            // RectangleInstance.draw();
+            var x = new Rectangle(200, 150, changeColor());
+            sceneList.push(x);
+            var y = new Rectangle(90, 90, changeColor());
+            sceneList.push(y);
+            updateAndDraw(sceneList);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <canvas id="myCanvas" width="300" height="200" style="border:1px solid gray;">
+    </canvas>
+    <script>
+        var c = document.getElementById("myCanvas");
+        let currentFrameNumber = 0;
+        // function draw(Rec){
+        //     var ctx = c.getContext("2d");
+        //     ctx.fillStyle = Rec.color;
+        //     ctx.strokeStyle = "black";
+        //     ctx.fillRect(Rec.x, Rec.y, 50, 50);
+        //     ctx.strokeRect(Rec.x, Rec.y, 50, 50);
+        // }
+
+        function changeColor() {
+            const letters = "0123456789ABCDEF";
+            var color = "#";
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function Rectangle(x, y, color){
+            this.x = x;
+            this.y = y;
+            this.color = color;
+
+            this.draw = function() {
+                var ctx = c.getContext("2d");
+                ctx.fillStyle = this.color;
+                ctx.strokeStyle = "black";
+                ctx.fillRect(this.x, this.y, 50, 50);
+                ctx.strokeRect(this.x, this.y, 50, 50);
+            };
+        }
+
+        function updateAndDraw(scenes){
+            currentFrameNumber++;
+            // var currentRectangleNumber = 0;
+            var banjo = Math.floor(Math.random() * 300);
+            var harmon = Math.floor(Math.random() * 200);
+            // scenes.push(new Rectangle(banjo, harmon, changeColor));
+            // for (let i = 0; i < scenes.length; i++){
+            //     scenes[i].draw();
+            // }
+            var rank = new Rectangle(banjo, harmon, changeColor());
+            rank.draw();
+            console.log(currentFrameNumber);
+            updateStats(currentFrameNumber);
+            requestAnimationFrame(function () {
+                updateAndDraw(scenes);
+            });
+        }
+
+        function updateStats(currentFrameNumber){
+            var p = document.getElementById("frameCount");
+            p.innerText = "Frame Count: " + currentFrameNumber;
+      
+            var p = document.getElementById("rectangleCount");
+            p.innerText = "Rectangles Count: " + sceneList.length;
+        }
+
+    </script>
+    <p></p>
+    <button onclick="init()">Change Spawn Color</button>
+    <p id = "frameCount"> <br></p>
+    <p id = "rectangleCount"> </p>
+</body>
+
+</html>
