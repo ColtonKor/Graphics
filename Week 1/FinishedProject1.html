@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        var sceneList = [];
+        function init() {
+            updateAndDraw(sceneList);
+        }
+    </script>
+</head>
+
+<body onload="init()">
+    <canvas id="myCanvas" width="300" height="200" style="border:1px solid gray;">
+    </canvas>
+    <script>
+        var c = document.getElementById("myCanvas");
+        var ctx = c.getContext("2d");
+        let currentFrameNumber = 0;
+
+        function changeColor() {
+            const letters = "0123456789ABCDEF";
+            var color = "#";
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        function Rectangle(x, y, color){
+            this.x = x;
+            this.y = y;
+            this.color = color;
+            this.velocity = {x: 0, y:0}
+        }
+
+        Rectangle.prototype.draw = function() {
+            ctx.fillStyle = this.color;
+            ctx.strokeStyle = "black";
+            ctx.fillRect(this.x, this.y, 35, 35);
+            ctx.strokeRect(this.x, this.y, 35, 35);
+        }
+
+        Rectangle.prototype.update = function(){
+            this.velocity.y++;
+            this.y = this.y + this.velocity.y * 0.16;
+        }
+
+
+
+        function updateAndDraw(scenes){
+            ctx.clearRect(0, 0, 300, 200);
+            currentFrameNumber++;
+            var banjo = Math.floor(Math.random() * 300);
+            var harmon = Math.floor(Math.random() * 200);
+            sceneList.push(new Rectangle(banjo, harmon, changeColor()));
+            for(let i = 0; i < sceneList.length; i++){
+                sceneList[i].update();
+                sceneList[i].draw();
+                if (sceneList[i].y > c.height) {
+                    sceneList.splice(i, 1);
+                }
+            }
+            console.log(currentFrameNumber);
+            updateStats(currentFrameNumber);
+            requestAnimationFrame(function () {
+                updateAndDraw(scenes);
+            });
+        }
+
+        function updateStats(currentFrameNumber){
+            var p = document.getElementById("frameCount");
+            p.innerText = "Frame Count: " + currentFrameNumber;
+      
+            var p = document.getElementById("rectangleCount");
+            p.innerText = "Rectangles Count: " + sceneList.length;
+        }
+
+    </script>
+    <p></p>
+    <button onclick="init()">Change Spawn Color</button>
+    <p id = "frameCount"> <br></p>
+    <p id = "rectangleCount"> </p>
+</body>
+
+</html>
