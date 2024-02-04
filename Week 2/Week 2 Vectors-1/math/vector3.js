@@ -98,23 +98,11 @@ Vector3.prototype = {
     // todo - return the magnitude (A.K.A. length) of 'this' vector
     // This should NOT change the values of this.x, this.y, and this.z
     var temp;
-    if(this.x == 0){
-      temp = this.y * this.y;
-      temp = temp + (this.z * this.z);
-      temp = Math.sqrt(temp);
-      return temp;
-    } else if(this.y == 0){
-      temp = this.x * this.x;
-      temp = temp + (this.z * this.z);
-      temp = Math.sqrt(temp);
-      return temp;
-    }else if(this.z == 0){
-      temp = this.y * this.y;
-      temp = temp + (this.x * this.x);
-      temp = Math.sqrt(temp);
-      return temp;
-    }
-    return 0;
+    temp = this.x * this.x;
+    temp += this.y * this.y;
+    temp += this.z * this.z;
+    temp = Math.sqrt(temp);
+    return temp;
   },
 
   //----------------------------------------------------------------------------- 
@@ -179,11 +167,17 @@ Vector3.prototype = {
     }
     // todo - return the vector that goes from "fromPoint" to "toPoint"
     //        NOTE - "fromPoint" and "toPoint" should not be altered
+    return new Vector3(toPoint.x-fromPoint.x, toPoint.y-fromPoint.y, toPoint.z-fromPoint.z);
   },
 
   //----------------------------------------------------------------------------- 
   rescale: function(newScale) {
     // todo - Change this vector's length to be newScale
+    var currLength = this.length();
+    var scale = newScale/currLength;
+    this.x *= scale;
+    this.y *= scale;
+    this.z *= scale;
     return this;
   },
 
@@ -191,7 +185,12 @@ Vector3.prototype = {
   angle: function(v1, v2) {
     // todo - calculate the angle in degrees between vectors v1 and v2. Do NOT
     //        change any values on the vectors themselves
-    return 0;
+    var dotpro = v1.dot(v2);
+    var mag1 = v1.length();
+    var mag2 = v2.length();
+    var angle1 = Math.acos(dotpro/(mag1*mag2));
+    var angle2 = angle1*(180/Math.PI);
+    return angle2;
   },
 
   //----------------------------------------------------------------------------- 
@@ -200,8 +199,12 @@ Vector3.prototype = {
     //        but whose length is the projection of "vectorToProject" onto "otherVector"
     //        NOTE - "vectorToProject" and "otherVector" should NOT be altered (i.e. use clone)
     //        See "Vector Projection Slides" under "Extras" for more info.
-
+    var newOther = otherVector.clone();
+    var newProject = vectorToProject.clone();
+    var dotpro = newProject.dot(newOther);
+    var newMag = newOther.lengthSqr();
+    var scalar = dotpro/newMag;
+    var projection = new Vector3(newOther.x*scalar, newOther.y*scalar, newOther.z*scalar);
+    return projection;
   }
 };
-
- 
