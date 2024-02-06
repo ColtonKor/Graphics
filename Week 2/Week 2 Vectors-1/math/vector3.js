@@ -114,20 +114,10 @@ Vector3.prototype = {
     // and the square can be substituted instead (for performance reasons).  
     // This function should NOT have to take the square root of anything.
     var temp;
-    if(this.x == 0){
-      temp = this.y * this.y;
-      temp = temp + (this.z * this.z);
-      return temp;
-    } else if(this.y == 0){
-      temp = this.x * this.x;
-      temp = temp + (this.z * this.z);
-      return temp;
-    }else if(this.z == 0){
-      temp = this.y * this.y;
-      temp = temp + (this.x * this.x);
-      return temp;
-    }
-    return 0;
+    temp = this.x * this.x;
+    temp += this.y * this.y;
+    temp += this.z * this.z;
+    return temp;
   },
 
   //----------------------------------------------------------------------------- 
@@ -135,10 +125,7 @@ Vector3.prototype = {
     // todo - Change the components of this vector so that its magnitude will equal 1.
     // This SHOULD change the values of this.x, this.y, and this.z
     var magnitude;
-    magnitude = this.x * this.x;
-    magnitude += this.y * this.y;
-    magnitude += this.z * this.z;
-    magnitude = Math.sqrt(magnitude);
+    magnitude = this.length();
     this.x = this.x/magnitude;
     this.y = this.y/magnitude;
     this.z = this.z/magnitude;
