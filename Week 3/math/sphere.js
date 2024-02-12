@@ -89,13 +89,14 @@ Sphere.prototype = {
       distance: null, // should be of type Number (scalar)
     };
 
-
-    if(r1.direction.length() == 1){
-      var a = 1;
-    } else {
-      var aDirection = r1.direction.clone();
-      var a = aDirection.dot(aDirection);
+    var inside = new Vector3().fromTo(this.center, r1.origin);
+    if(inside.length() < this.radius){
+      result.hit = false;
+      return result;
     }
+
+    var aDirection = r1.direction.clone();
+    var a = aDirection.dot(aDirection);
 
     var bDirection = r1.direction.clone();
     bDirection = bDirection.multiplyScalar(2);
@@ -109,51 +110,61 @@ Sphere.prototype = {
     var cRadius = this.radius * this.radius;
     var c = cDot - cRadius;
 
-    var quadB1 = b * b;
+    var quadB1 = b*b;
     var quadA1 = a*c;
     quadA1 = quadA1*4;
     var discriminant = quadB1 - quadA1;
-    if(discriminant< 0){
+
+    if(discriminant < 0){
       result.hit = false;
       return result;
+    } else if(discriminant == 0){
+      var equal = -b/(2*a);
+      if(equal > 0){
+        var alpha = r1.origin.clone();
+        var beta = r1.direction.clone();
+        alpha = alpha.add(beta.multiplyScalar(equal));
+
+        result.hit = true;
+        result.point = alpha;
+        result.normal = new Vector3().fromTo(this.center, alpha).normalize();
+        result.distance = equal;
+        return result;
+      } else {
+        result.hit = false;
+        return result;
+      }
+    } else {
+      discriminant = Math.sqrt(discriminant);
+      var pos = (-b+discriminant)/(2*a);
+      var neg = (-b-discriminant)/(2*a);
+
+      if((pos < 0 && neg < 0)){
+        result.hit = false;
+        return result;
+      }
+
+      var alpha1 = r1.origin.clone();
+      var alpha2 = r1.direction.clone();
+      alpha1 = alpha1.add(alpha2.multiplyScalar(pos));
+
+      var alpha3 = r1.origin.clone();
+      var alpha4 = r1.direction.clone();
+      alpha3 = alpha3.add(alpha4.multiplyScalar(neg));
+
+      result.hit = true;
+      if(neg < pos){
+        result.point = alpha3;
+        result.normal = new Vector3().fromTo(this.center, alpha3).normalize();
+        result.distance = neg;
+        return result;
+      } else if (pos < neg){
+        result.point = alpha1;
+        result.normal = new Vector3().fromTo(this.center, alpha1).normalize();
+        result.distance = pos;
+        return result;
+      }
     }
-    discriminant = Math.sqrt(discriminant);
-    
-    var pos = (-b + discriminant)/(2*a);
-    var neg = (-b - discriminant)/(2*a);
-
-    // if(discriminant == 0 && (pos > 0 && neg > 0)){
-    //   result.normal = new Vector3(1, 0, 0);
-    //   return result;
-    // }
-
-    if((pos < 0 && neg < 0) || (discriminant == 0 && (pos > 0 && neg > 0))){
-      result.hit = false;
-      result.normal = new Vector3(1, 0, 0);
-      return result;
-    }
-
-    var alpha1 = r1.origin.clone();
-    var alpha2 = r1.direction.clone();
-    alpha1 = alpha1.add(alpha2.multiplyScalar(pos));
-
-    var alpha3 = r1.origin.clone();
-    var alpha4 = r1.direction.clone();
-    alpha3 = alpha3.add(alpha4.multiplyScalar(neg));
-
-    result.hit = true;
-    if(neg < pos){
-      result.point = alpha3;
-      result.normal = new Vector3().fromTo(this.center, alpha3);
-      result.distance = neg;
-    } else if (pos < neg){
-      result.point = alpha1;
-      result.normal = new Vector3().fromTo(this.center, alpha1);
-      result.distance = pos;
-    }
-
-
-    return result;
   }
 }
 
