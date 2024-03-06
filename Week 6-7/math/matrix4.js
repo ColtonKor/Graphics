@@ -100,11 +100,7 @@ Matrix4.prototype = {
 
     for (var i = 0; i < 4; i++) {
       for (var j = 0; j < 4; j++) {
-        result[i * 4 + j] =
-          Main[i * 4] * Right[j] +
-          Main[i * 4 + 1] * Right[j + 4] +
-          Main[i * 4 + 2] * Right[j + 8] +
-          Main[i * 4 + 3] * Right[j + 12];
+        result[i * 4 + j] = Main[i * 4] * Right[j] + Main[i * 4 + 1] * Right[j + 4] + Main[i * 4 + 2] * Right[j + 8] + Main[i * 4 + 3] * Right[j + 12];
       }
     }
 
@@ -186,6 +182,7 @@ Matrix4.prototype = {
     // todo - wipe out the existing matrix and make it a pure translation
     //      - If arg1 is a Vector3 or Vector4, use its components and ignore
     //        arg2 and arg3. O.W., treat arg1 as x, arg2 as y, and arg3 as z
+    this.makeIdentity();
     if (arg1 instanceof Vector4) {
       this.elements[3] = arg1.x;
       this.elements[7] = arg1.y;
@@ -251,7 +248,7 @@ Matrix4.prototype = {
     //        and scale should NOT be modified.
 
     var trsMatrix = new Matrix4();
-    // trsMatrix.multiply(translation).multiply(rotation).multiply(scale);
+    trsMatrix.multiply(translation).multiply(rotation).multiply(scale);
     return trsMatrix;
   },
 
@@ -272,6 +269,8 @@ Matrix4.prototype = {
     var moonMatrix = new Matrix4();
 
     // todo - combine all necessary matrices necessary to achieve the desired effect
+    moonMatrix.multiply(earthTransform).multiply(new Matrix4().makeRotationZ(currentRotationAngle)).multiply(new Matrix4().makeTranslation(offsetFromEarth));
+
 
     return moonMatrix;
   },
