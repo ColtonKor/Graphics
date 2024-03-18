@@ -34,11 +34,17 @@
 	<!-- fragment shader - Pixel color is determined here -->
 	<script id="shader-fs" type="x-shader/x-fragment">
     precision mediump float;
+	uniform float uTime;
 
     varying vec3 vColor;
 
     void main(void) {
-        gl_FragColor = vec4(vColor, 1.0);
+		float r = sin(uTime * 2.0 + 0.0) * 0.5 + 0.5;
+		float g = sin(uTime * 2.0 + 2.0) * 0.5 + 0.5;
+		float b = sin(uTime * 2.0 + 4.0) * 0.5 + 0.5;
+
+    	vec3 color = vec3(r, g, b) * vColor;
+        gl_FragColor = vec4(color, 1.0);
     }
 </script>
 
@@ -161,6 +167,7 @@
 			shaderProgram.worldMatrixUniform = gl.getUniformLocation(shaderProgram, "uWorldMatrix");
 			shaderProgram.viewMatrixUniform = gl.getUniformLocation(shaderProgram, "uViewMatrix");
 			shaderProgram.projectionMatrixUniform = gl.getUniformLocation(shaderProgram, "uProjectionMatrix");
+			shaderProgram.timeUniform = gl.getUniformLocation(shaderProgram, "uTime");
 		}
 
 		// -------------------------------------------------------------------------
@@ -253,15 +260,20 @@
 
 			var colorBuffer = gl.createBuffer();
 			gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-
+			
 			var lineColors = [];
 			for (var i = 0; i < linePositions.length / 3; ++i) {
-				lineColors.push.apply(lineColors, [0, 0, 0]);
+				r = Math.random();
+				g = Math.random();
+				b = Math.random();
+
+				lineColors.push.apply(lineColors, [r, b, g]);
 			}
 
 			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(lineColors), gl.STATIC_DRAW);
 
 			lineGridGeometry.positionBuffer = positionBuffer;
+			lineGridGeometry.shaderProgram = shaderProgram;
 			lineGridGeometry.colorBuffer = colorBuffer;
 			lineGridGeometry.bufferItemCount = 2 * 21 * 2;
 		}
@@ -333,6 +345,7 @@
 			gl.uniformMatrix4fv(shaderProgram.viewMatrixUniform, false, viewMatrix.clone().transpose().elements);
 			gl.uniformMatrix4fv(shaderProgram.projectionMatrixUniform, false, projectionMatrix.clone().transpose().elements);
 
+			gl.uniform1f(shaderProgram.timeUniform, time.secondsElapsedSinceStart);
 			gl.drawArrays(gl.TRIANGLES, 0, triangleGeometry.bufferItemCount);
 		}
 
@@ -356,6 +369,18 @@
 				gl.FALSE,
 				0, // stride - used for mixing data in a single buffer, ignore
 				0  // offset - used for mixing data in a single buffer, ignore
+			);
+
+			
+
+			gl.bindBuffer(gl.ARRAY_BUFFER, lineGridGeometry.colorBuffer);
+			gl.vertexAttribPointer(
+				lineGridGeometry.shaderProgram.vertexColorAttribute,
+				3, // each color is a 3-float (r, g, b)
+				gl.FLOAT,
+				false,
+				0, // stride
+				0  // offset
 			);
 
 			// todo - send matrices to shader
