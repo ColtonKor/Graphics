@@ -145,10 +145,18 @@ function updateAndRender() {
     groundGeometry.render(camera, projectionMatrix, colorProgram);
 
     // todo #5 - change color for the sphere
-    gl.uniform4f(colorProgram.uniforms.colorUniform, 1.0, 1.0, 1.0, 1.0);
+    // gl.uniform4f(colorProgram.uniforms.colorUniform, 1.0, 1.0, 1.0, 1.0);
 
     // todo #9 - animate the color of there sphere
+    // var shade = (Math.cos(time.secondsElapsedSinceStart) + 1)/2;
+    // gl.uniform4f(colorProgram.uniforms.colorUniform, 1 / shade, 1 - shade, 2 * shade, 1.0);
+
     // todo #10 - animate the color with non-grayscale values
+    var t = time.secondsElapsedSinceStart;
+    var r = (Math.sin(t) + 1) / 2;
+    var g = (Math.cos(t) + 1) / 2;
+    var b = (Math.sin(t) + 1) / 2;
+    gl.uniform4f(colorProgram.uniforms.colorUniform, r, g, b, 1.0);
 
     // todo #3 - render the sphere
     sphereGeometry.render(camera, projectionMatrix, colorProgram);
