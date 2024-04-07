@@ -48,6 +48,7 @@ function initGL(canvas) {
         // todo #7
         // todo enable depth test (z-buffering)
         gl.enable(gl.DEPTH_TEST);
+        gl.depthMask(true);
         // todo enable backface culling
         gl.enable(gl.CULL_FACE);
         gl.cullFace(gl.BACK);
@@ -159,6 +160,20 @@ function updateAndRender() {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // todo #10 apply the painter's algorithm
+    // sphereGeometryList.sort(function(a, b) {
+    //     var aPos = a.getPosition();
+    //     var bPos = b.getPosition();
+    //     var cPos = camera.getPosition();
+
+    //     var aFrom = fromTo(aPos, cPos);
+    //     var bFrom = fromTo(bPos, cPos);
+
+    //     if(aFrom.length() > bFrom.length()){
+    //         return 1;
+    //     } else {
+    //         return -1;
+    //     }
+    // });
 
     // todo #6
     // uncomment when directed by guide

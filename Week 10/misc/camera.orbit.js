@@ -14,17 +14,19 @@ function OrbitCamera (input) {
 	// -------------------------------------------------------------------------
 	this.getViewMatrix = function() {
 		// todo #1 - return the correct view matrix (you will need to use "clone")
+		var yawRadians = this.yawDegrees * (Math.PI/180);
+		var pitchRadians = this.pitchDegrees * (Math.PI/180);
+
+		var cameraX = this.cameraTarget.x + this.zoomScale * Math.cos(yawRadians) * Math.cos(pitchRadians);
+		var cameraY = this.cameraTarget.y + this.zoomScale * Math.sin(pitchRadians);
+		var cameraZ = this.cameraTarget.z + this.zoomScale * Math.sin(yawRadians) * Math.cos(pitchRadians);
+		var cameraPosition = new Vector4(cameraX, cameraY, cameraZ, 1);
+		var run = new Matrix4().makeTranslation(cameraPosition);
+
+
 		var viewMatrix = this.cameraWorldMatrix.clone();
 		viewMatrix = viewMatrix.inverse();
-
-		var pitchMatrix = new Matrix4().makeRotationX(this.pitchDegrees);
-		viewMatrix.multiply(pitchMatrix);
-
-		var yawMatrix = new Matrix4().makeRotationY(this.yawDegrees);
-		viewMatrix.multiply(yawMatrix);
-
-		var zoomMatrix = new Matrix4().makeTranslation(0, 0, this.zoomScale);
-		viewMatrix.multiply(zoomMatrix);
+		viewMatrix.multiply(run);
 
         return viewMatrix;
 	}
@@ -32,6 +34,7 @@ function OrbitCamera (input) {
 	// -----------------------------------------------------------------------------
 	this.getPosition = function() {
 		// todo #9 - return a vector4 of the camera's world position contained in its matrix
+		// return new Vector4(this.cameraWorldMatrix.elements[3], this.cameraWorldMatrix.elements[7], this.cameraWorldMatrix.elements[11], 1);
 	}
 
 	// -------------------------------------------------------------------------
