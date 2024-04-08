@@ -160,20 +160,20 @@ function updateAndRender() {
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // todo #10 apply the painter's algorithm
-    // sphereGeometryList.sort(function(a, b) {
-    //     var aPos = a.getPosition();
-    //     var bPos = b.getPosition();
-    //     var cPos = camera.getPosition();
+    var cPos = camera.getPosition();
+    sphereGeometryList.sort(function(a, b) {
+        var aPos = a.getPosition();
+        var bPos = b.getPosition();
 
-    //     var aFrom = fromTo(aPos, cPos);
-    //     var bFrom = fromTo(bPos, cPos);
+        var aFrom = aPos.clone().subtract(cPos);
+        var bFrom = bPos.clone().subtract(cPos);
 
-    //     if(aFrom.length() > bFrom.length()){
-    //         return 1;
-    //     } else {
-    //         return -1;
-    //     }
-    // });
+        if(aFrom.length() > bFrom.length()){
+            return 1;
+        } else {
+            return -1;
+        }
+    });
 
     // todo #6
     // uncomment when directed by guide
